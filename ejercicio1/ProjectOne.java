@@ -4,6 +4,7 @@
  */
 package com.mycompany.ejercicio1;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
 
 /**
@@ -29,7 +30,23 @@ public class ProjectOne {
         //Calcular el sueldo total de todos los empledos
         double totalSueldo = pool.invoke(tarea);
         System.out.println("Sueldo total de todos los empleados: "+totalSueldo);
-             
+
+
+
+        /*
+         * Agregando Patron Proxy para control de acceso
+         */
+
+         // Crear un proxy de acceso
+         SalaryTaskProxy proxyWithAccess = new SalaryTaskProxy(tarea, true);
+
+         // Crear un ForkJoinPool y ejecutar la tarea a través del proxy
+         ForkJoinPool pool2 = new ForkJoinPool();
+         double totalSalario = pool.invoke(new RecursiveTask<Double>() {
+            @Override
+            protected Double compute(){
+                return proxyWithAccess.computeSalary();
+            }
+         }); 
     }
-    
 }
